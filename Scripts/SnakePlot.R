@@ -109,7 +109,7 @@ for (i in plot.order){
 # x = x[!is.na(x$total.x), ]
 # # wilcoxon paired test
 # wilcox.test(x$total.x, x$total.y, paired = T)
-
-
+# write.table(facets.all.out, file = 'tmp/facets.out.txt', sep = '\t', row.names = F, quote = F)
+# write.table(summary.out, file = 'tmp/Affy.out.txt', sep = '\t', row.names = F, quote = F)
 
 
