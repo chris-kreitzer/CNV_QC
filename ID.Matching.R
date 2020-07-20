@@ -37,7 +37,7 @@ impact.maf$eval = paste(impact.maf$Hugo_Symbol, impact.maf$Variant_Classificatio
 
 # annotate IMPACT samples; cancer type; 
 # IMPACT meta data fetched from 07/14/2020
-impact.meta = vroom::vroom('~/Downloads/new.tsv', delim = '\t')
+impact.meta = vroom::vroom('~/Documents/MSKCC/00_Data/meta.impact.tsv', delim = '\t')
 impact.maf = merge(impact.maf, 
                    impact.meta[,c('Sample', 'CancerType')],
                    by.x = 'Tumor_Sample_Barcode',
@@ -58,14 +58,15 @@ impact.maf = impact.maf[which(impact.maf$Tumor_Sample_Barcode %in%
 # one example run: n = 5,000 MSK samples
 # already.tested = vroom::vroom(file = '~/Desktop/matchfirst.txt')
 impact.samples = unique(impact.maf$Tumor_Sample_Barcode)
-impact.samples = sample(size = 5000, impact.samples)
+impact.samples = sample(size = 4000, impact.samples)
 
 # subset data frame to work with those samples; IMPACT
 impact.maf = impact.maf[which(impact.maf$Tumor_Sample_Barcode %in% impact.samples), ]
 
 # loop through IMPACT
+set.seed(123)
 match.out.list = mclapply(unique(impact.maf$Tumor_Sample_Barcode), function(x){
-  s.msk.c = a[which(impact.maf$Tumor_Sample_Barcode == x), 'eval']
+  s.msk.c = impact.maf[which(impact.maf$Tumor_Sample_Barcode == x), 'eval']
   
   mclapply(unique(tcga.msk$Tumor_Sample_Barcode), function(j){
     s.tcga.c = tcga.msk[which(tcga.msk$Tumor_Sample_Barcode == j), 'eval']
@@ -80,9 +81,7 @@ match.out.list = mclapply(unique(impact.maf$Tumor_Sample_Barcode), function(x){
                        msk.type = unique(impact.maf[impact.maf$Tumor_Sample_Barcode == x, 
                                                     'CancerType']))
       }
-    
     })
-
 })
   
 match.out.data = dplyr::bind_rows(match.out.list)
@@ -94,7 +93,9 @@ match.data.complete = merge(match.out.data,
                             by.y = 'TSS.Code',
                             all.x = T)
 
-
+# create tmp/dir and save output file
+dir.create('tmp/')
+write.table(match.data.complete, file = 'tmp/matchID.txt', sep = '\t', row.names = F)
 
 
 # cbio = function(x){
