@@ -70,9 +70,9 @@ for(i in 1:length(example.tcga)){
   
 }
 
-
-
-
+x = facets::readSnpMatrix('~/Documents/MSKCC/CPNA_analysis/TCGA/PTEN_counts/TCGA-2A-AAYU-10A-01D-A41N-08_TCGA-2A-AAYU-01A-11D-A41K-08_ihvrFYsz_countsMerged___normal_tumor.dat.gz')
+y = facetsSuite::run_facets(x)
+z = facetsSuite::arm_level_changes(segs = y$segs, ploidy = y$ploidy)
 
 
 
